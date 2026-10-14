@@ -111,14 +111,18 @@ class TikTokClient:
             "cursor": str(cursor),
             "count": str(count),
             "aid": "1988",
-            "app_language": "en",
-            "current_region": "US",
+            "app_language": "id-ID",
+            "current_region": "ID",
+        }
+        headers = {
+            "Referer": f"https://www.tiktok.com/video/{video_id}",
         }
 
         try:
             response = self.session.get(
                 TIKTOK_COMMENT_LIST_URL,
                 params=params,
+                headers=headers,
                 timeout=self.timeout,
             )
         except requests.RequestException as e:
@@ -153,11 +157,15 @@ class TikTokClient:
             "count": str(count),
             "aid": "1988",
         }
+        headers = {
+            "Referer": f"https://www.tiktok.com/video/{video_id}",
+        }
 
         try:
             response = self.session.get(
                 TIKTOK_COMMENT_REPLY_URL,
                 params=params,
+                headers=headers,
                 timeout=self.timeout,
             )
             if response.status_code != 200:

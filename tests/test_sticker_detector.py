@@ -133,3 +133,39 @@ def test_no_fabricated_id_or_empty_url():
     }
     stickers = extract_stickers_from_comment(comment)
     assert stickers == []
+
+
+def test_extract_stickers_from_cmt_sticker_struct():
+    """Verify modern TikTok cmt_sticker_struct is correctly detected."""
+    comment = {
+        "cid": "7689421199651668743",
+        "text": "",
+        "cmt_sticker_struct": {
+            "id": "82771737633539",
+            "animated_url": {
+                "high_resolution_url": {
+                    "url_list": [
+                        "https://p16-tiktok-dm-sticker-sign-sg.ibyteimg.com/tos-alisg-i-dhq7zx4c1p-sg/5bc.awebp?rk3s=00edd399"
+                    ]
+                }
+            },
+            "static_url": {
+                "high_resolution_url": {
+                    "url_list": [
+                        "https://p16-tiktok-dm-sticker-sign-sg.ibyteimg.com/tos-alisg-i-dhq7zx4c1p-sg/thumb.awebp?rk3s=00edd399"
+                    ]
+                }
+            },
+        },
+    }
+
+    stickers = extract_stickers_from_comment(comment)
+    assert len(stickers) == 1
+    s = stickers[0]
+    assert s["comment_id"] == "7689421199651668743"
+    assert s["sticker_id"] == "82771737633539"
+    assert s["sticker_url"] == "https://p16-tiktok-dm-sticker-sign-sg.ibyteimg.com/tos-alisg-i-dhq7zx4c1p-sg/5bc.awebp?rk3s=00edd399"
+    assert s["thumbnail_url"] == "https://p16-tiktok-dm-sticker-sign-sg.ibyteimg.com/tos-alisg-i-dhq7zx4c1p-sg/thumb.awebp?rk3s=00edd399"
+    assert s["media_type"] == "image/webp"
+    assert s["download_status"] == "pending"
+

@@ -68,22 +68,13 @@ def parse_comment_response(data: Dict[str, Any]) -> CommentBatch:
 
         reply_count = item.get("reply_comment_total", 0)
 
-        parsed_item = {
-            "cid": cid,
-            "text": text,
-            "username": username,
-            "create_time": create_time,
-            "reply_comment_total": reply_count,
-            "raw": item,
-        }
-
-        # Include any sticker or image data from the raw item
-        if "sticker" in item:
-            parsed_item["sticker"] = item["sticker"]
-        if "stickers" in item:
-            parsed_item["stickers"] = item["stickers"]
-        if "image_list" in item:
-            parsed_item["image_list"] = item["image_list"]
+        parsed_item = dict(item)
+        parsed_item["cid"] = cid
+        parsed_item["text"] = text
+        parsed_item["username"] = username
+        parsed_item["create_time"] = create_time
+        parsed_item["reply_comment_total"] = reply_count
+        parsed_item["raw"] = item
 
         parsed_comments.append(parsed_item)
 
@@ -93,20 +84,13 @@ def parse_comment_response(data: Dict[str, Any]) -> CommentBatch:
             for reply in reply_list:
                 if isinstance(reply, dict):
                     r_cid = str(reply.get("cid") or reply.get("id") or "")
-                    r_parsed = {
-                        "cid": r_cid,
-                        "text": str(reply.get("text") or ""),
-                        "username": (reply.get("user") or {}).get("unique_id", "unknown"),
-                        "create_time": reply.get("create_time"),
-                        "reply_comment_total": 0,
-                        "raw": reply,
-                    }
-                    if "sticker" in reply:
-                        r_parsed["sticker"] = reply["sticker"]
-                    if "stickers" in reply:
-                        r_parsed["stickers"] = reply["stickers"]
-                    if "image_list" in reply:
-                        r_parsed["image_list"] = reply["image_list"]
+                    r_parsed = dict(reply)
+                    r_parsed["cid"] = r_cid
+                    r_parsed["text"] = str(reply.get("text") or "")
+                    r_parsed["username"] = (reply.get("user") or {}).get("unique_id", "unknown")
+                    r_parsed["create_time"] = reply.get("create_time")
+                    r_parsed["reply_comment_total"] = 0
+                    r_parsed["raw"] = reply
 
                     parsed_comments.append(r_parsed)
 
