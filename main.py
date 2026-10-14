@@ -31,10 +31,12 @@ from core.tiktok_client import (
     TikTokURLInvalidError,
 )
 from utils.cli_ui import (
+    clear_screen,
     display_header,
     display_previous_results_table,
     display_scraping_summary,
     display_stickers_table,
+    pause_and_return,
     prompt_menu_choice,
     prompt_text,
 )
@@ -250,7 +252,8 @@ def handle_view_previous() -> None:
 
 
 def interactive_main() -> None:
-    """Main interactive menu loop."""
+    """Main interactive menu loop with clean screen refreshes."""
+    clear_screen()
     display_header()
 
     while True:
@@ -261,6 +264,8 @@ def interactive_main() -> None:
             url = prompt_text("TikTok Video URL:")
             if not url:
                 logger.warning("No URL provided. Returning to menu.")
+                pause_and_return()
+                display_header(clear=True)
                 continue
 
             try:
@@ -270,33 +275,49 @@ def interactive_main() -> None:
             except Exception as e:
                 logger.error(f"Unexpected error: {e}")
 
+            pause_and_return()
+            display_header(clear=True)
+
         elif choice == "2":
             # Extract sticker URLs from JSON
             json_file = prompt_text("JSON file path:")
             if not json_file:
                 logger.warning("No file path provided.")
+                pause_and_return()
+                display_header(clear=True)
                 continue
             handle_extract_json(json_file)
+            pause_and_return()
+            display_header(clear=True)
 
         elif choice == "3":
             # Download stickers from JSON
             json_file = prompt_text("JSON file path:")
             if not json_file:
                 logger.warning("No file path provided.")
+                pause_and_return()
+                display_header(clear=True)
                 continue
             handle_download_json(json_file)
+            pause_and_return()
+            display_header(clear=True)
 
         elif choice == "4":
             # View previous results
             handle_view_previous()
+            pause_and_return()
+            display_header(clear=True)
 
         elif choice == "5":
             # Exit
+            clear_screen()
             logger.info("Thank you for using Berry TikTok Sticker Scraper. Goodbye!")
             sys.exit(0)
 
         else:
             logger.warning("Invalid choice. Please select an option from 1 to 5.")
+            pause_and_return()
+            display_header(clear=True)
 
 
 def parse_arguments() -> argparse.Namespace:

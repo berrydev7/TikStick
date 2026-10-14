@@ -18,8 +18,30 @@ from config import APP_NAME, APP_VERSION
 from utils.logger import get_console
 
 
-def display_header() -> None:
+def clear_screen() -> None:
+    """Clear the terminal screen cross-platform (Windows, Linux, Termux, macOS)."""
+    import os
+    try:
+        os.system("cls" if os.name == "nt" else "clear")
+    except Exception:
+        try:
+            get_console().clear()
+        except Exception:
+            pass
+
+
+def pause_and_return(prompt: str = "Press Enter to return to main menu...") -> None:
+    """Pause execution until the user presses Enter."""
+    try:
+        input(f"\n{prompt}")
+    except (KeyboardInterrupt, EOFError):
+        pass
+
+
+def display_header(clear: bool = False) -> None:
     """Display the official Berry branding header panel."""
+    if clear:
+        clear_screen()
     console = get_console()
     title_text = f"[bold cyan]{APP_NAME.upper()}[/bold cyan]\n[dim]Version {APP_VERSION}[/dim]"
     panel = Panel(
